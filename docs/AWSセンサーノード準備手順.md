@@ -127,6 +127,7 @@ local PC 側では先に次を行う。
 ```bash
 make elk-up-cowrie-live
 make kibana-import-cowrie-live-dashboard
+make es-create-cowrie-live-shipper-user
 ```
 
 ### 7-2. CA 証明書を EC2 側へ渡す
@@ -139,7 +140,7 @@ filebeat/certs/ca/ca.crt
 
 ### 7-3. shipper 用 env を作る
 
-EC2 側で `.env.shipper.example` を `.env.shipper` にコピーし、ELK 側の private endpoint と認証情報を入れる。
+EC2 側で `.env.shipper.example` を `.env.shipper` にコピーし、ELK 側の private endpoint と、`make es-create-cowrie-live-shipper-user` が出力した認証情報を入れる。
 
 ```bash
 cp .env.shipper.example .env.shipper
