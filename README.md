@@ -1,6 +1,6 @@
-# adids-honeypots
+# potter
 
-`adids-honeypots` は、公開ハニーポット群を独立運用するための repo である。
+`potter` は、公開ハニーポット群を独立運用するための repo である。
 
 現在は次を扱う。
 
