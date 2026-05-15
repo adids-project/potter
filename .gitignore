@@ -1,0 +1,6 @@
+cowrie/var/log/cowrie/*
+!cowrie/var/log/cowrie/.gitkeep
+cowrie/var/lib/cowrie/*
+!cowrie/var/lib/cowrie/.gitkeep
+data/logs/zeek/live/cowrie/current/*
+!data/logs/zeek/live/cowrie/current/.gitkeep
