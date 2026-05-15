@@ -4,3 +4,6 @@ cowrie/var/lib/cowrie/*
 !cowrie/var/lib/cowrie/.gitkeep
 data/logs/zeek/live/cowrie/current/*
 !data/logs/zeek/live/cowrie/current/.gitkeep
+.env.shipper
+filebeat/certs/ca/*
+!filebeat/certs/ca/.gitkeep

@@ -24,3 +24,22 @@ services:
       - /bin/sh
       - -lc
       - mkdir -p /logs/current && cd /logs/current && exec /usr/local/zeek/bin/zeek -i eth0 LogAscii::use_json=T
+
+  filebeat-cowrie-live-shipper:
+    depends_on:
+      zeek-cowrie-live:
+        condition: service_started
+    image: docker.elastic.co/beats/filebeat:8.7.1
+    restart: unless-stopped
+    user: root
+    volumes:
+      - "./data/logs/zeek/live/cowrie:/usr/share/filebeat/ingest_data/:ro"
+      - "./filebeat/cowrie_live_conn_shipper.yml:/usr/share/filebeat/filebeat.yml:ro"
+      - "./filebeat/certs/ca:/usr/share/filebeat/certs/ca:ro"
+    environment:
+      - ELASTIC_HOSTS=${ELASTIC_HOSTS}
+      - ELASTIC_USER=${ELASTIC_USER}
+      - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - SENSOR_ID=${SENSOR_ID:-zeek-cowrie-live-01}
+    command:
+      - --strict.perms=false

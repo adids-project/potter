@@ -16,12 +16,12 @@ repo 側で実装済みなのは次である。
 
 - EC2 上で使える `docker-compose.yml`
 - `make cowrie-live-up`
+- `make cowrie-live-shipper-up`
 - local PC 側の `make elk-up-cowrie-live`
 - `make kibana-import-cowrie-live-dashboard`
 
 まだ運用で決める必要があるのは次である。
 
-- EC2 と local PC のログ転送方法
 - EC2 の公開 IP / DNS
 - Security Group
 - local PC から Kibana を見る時間帯と time range
@@ -30,7 +30,7 @@ repo 側で実装済みなのは次である。
 補足:
 
 - `adids-elk` 側の Filebeat は、ELK マシン上にある `conn.log` を読む local ingest である
-- AWS 側で 1 行ごとに送りたい場合は、将来的には `adids-honeypots` 側に remote shipper を置くのが自然である
+- AWS 側で 1 行ごとに送りたい場合は、`adids-honeypots` 側の remote shipper を使う
 
 ## 2. EC2 側の前提
 
@@ -85,6 +85,8 @@ make cowrie-ps
 - `cowrie`
 - `zeek-cowrie-live`
 
+remote shipper まで含める場合は、後述の `make cowrie-live-shipper-up` を使う。
+
 ## 5. EC2 側の確認
 
 Cowrie に対して外から接続試行が来ると、少なくとも次が増える。
@@ -114,17 +116,45 @@ Kibana で開くもの:
 
 - `Cowrie Live Attack Monitoring`
 
-## 7. ログ転送について
+## 7. リアルタイム転送について
 
-現在の repo は、EC2 側センサーと local PC 側 ELK を別ノードに置く構成を前提にしているが、転送そのものを自動化する deployment script まではまだ持っていない。
+現在の推奨は、EC2 側で Zeek が生成した `conn.log` を Filebeat shipper が 1 行ごとに local ELK の Elasticsearch へ送る構成である。
 
-現実的な候補:
+### 7-1. local ELK 側の準備
 
-- Tailscale 上で rsync / scp
-- Tailscale 上で bind mount / SSHFS
-- Filebeat を EC2 側で直接 local Elasticsearch に送る
+local PC 側では先に次を行う。
 
-当日直前に新規実装するより、まずは Tailscale 経由の安定したファイル転送で `conn.log` を local 側へ届けるのが安全である。
+```bash
+make elk-up-cowrie-live
+make kibana-import-cowrie-live-dashboard
+```
+
+### 7-2. CA 証明書を EC2 側へ渡す
+
+`adids-elk` 側で生成された CA 証明書を、EC2 側 repo の次へ配置する。
+
+```text
+filebeat/certs/ca/ca.crt
+```
+
+### 7-3. shipper 用 env を作る
+
+EC2 側で `.env.shipper.example` を `.env.shipper` にコピーし、ELK 側の private endpoint と認証情報を入れる。
+
+```bash
+cp .env.shipper.example .env.shipper
+```
+
+### 7-4. Cowrie + Zeek + shipper を起動する
+
+```bash
+make cowrie-live-shipper-up
+make cowrie-ps
+```
+
+これで、`data/logs/zeek/live/cowrie/current/conn.log` に新しい行が追加されるたび、EC2 側 Filebeat が `zeek-cowrie-live-*` へ送る。
+
+fallback として、Tailscale 経由のファイル転送で `conn.log` を local 側へ届け、`adids-elk` 側の local ingest を使う方法も残る。
 
 ## 8. 発表前チェックリスト
 
