@@ -11,7 +11,6 @@
 
 - Docker / Docker Compose が使えること
 - `make cowrie-up` が動作済み、または Cowrie 単体基盤の意味を理解していること
-- `make elk-up-cowrie` が動作済み、または Cowrie app ingest の意味を理解していること
 
 Cowrie 単体起動は [Cowrieを起動する手順.md](./Cowrieを起動する手順.md) を参照。
 
@@ -59,7 +58,7 @@ data/logs/zeek/live/cowrie/current/conn.log
 make elk-up-cowrie-live
 ```
 
-この target は、Cowrie app log 用 `filebeat-cowrie01` を起動し、`filebeat/cowrie_live_enrich_pipeline.json` を Elasticsearch に登録したうえで、Zeek live `conn.log` 用 `filebeat-cowrie-live01` を起動する。
+この target は、`filebeat/cowrie_live_enrich_pipeline.json` を Elasticsearch に登録したうえで、Zeek live `conn.log` 用 `filebeat-cowrie-live01` を起動する。
 
 GeoIP/ASN pipeline だけを再投入したい場合は、次を使う。
 
@@ -81,22 +80,18 @@ nc 127.0.0.1 2222
 SSH-2.0-test-client
 ```
 
-このあと、次の 2 系統が増えることを確認する。
+このあと、少なくとも次が増えることを確認する。
 
-- `cowrie/var/log/cowrie/cowrie.json`
 - `data/logs/zeek/live/cowrie/current/conn.log`
 
-さらに Elasticsearch では、次の 2 index pattern が増える。
+さらに Elasticsearch では、次の index pattern が増える。
 
-- `cowrie-app-*`
 - `zeek-cowrie-live-*`
 
 ## 6. Data View
 
 Kibana では次の Data View を使う。
 
-- `cowrie-app`
-  - 攻撃者行動を見る
 - `zeek-cowrie-live`
   - flow 情報を見る
 
@@ -107,7 +102,7 @@ Kibana では次の Data View を使う。
 - Timestamp field: `@timestamp`
 
 現在 repo に保存済みの realtime dashboard は、[cowrie_live_attack_monitoring.ndjson](/home/mnl/adids-core/repos/adids-elk/docs/kibana_saved_objects/cowrie_live_attack_monitoring.ndjson:1) を import して使う。
-この dashboard は `zeek-cowrie-live-*` だけを対象にし、`cowrie-app-*` は含めない。
+この dashboard は `zeek-cowrie-live-*` だけを対象にする。
 また、GeoIP/ASN enrich が有効なら `source.ip`, `source.geo.country_name`, `source.as.organization.name` を使った panel と map が有効になる。
 
 Kibana 起動後の canonical な import は次で行う。

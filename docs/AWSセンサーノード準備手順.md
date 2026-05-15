@@ -27,6 +27,11 @@ repo 側で実装済みなのは次である。
 - local PC から Kibana を見る時間帯と time range
 - secret をどのノードに置くか
 
+補足:
+
+- `adids-elk` 側の Filebeat は、ELK マシン上にある `conn.log` を読む local ingest である
+- AWS 側で 1 行ごとに送りたい場合は、将来的には `adids-honeypots` 側に remote shipper を置くのが自然である
+
 ## 2. EC2 側の前提
 
 推奨:
@@ -85,14 +90,12 @@ make cowrie-ps
 Cowrie に対して外から接続試行が来ると、少なくとも次が増える。
 
 ```text
-cowrie/var/log/cowrie/cowrie.json
 data/logs/zeek/live/cowrie/current/conn.log
 ```
 
 簡単な確認:
 
 ```bash
-ls -l cowrie/var/log/cowrie/cowrie.json
 ls -l data/logs/zeek/live/cowrie/current/conn.log
 tail -n 5 data/logs/zeek/live/cowrie/current/conn.log
 ```
@@ -121,16 +124,15 @@ Kibana で開くもの:
 - Tailscale 上で bind mount / SSHFS
 - Filebeat を EC2 側で直接 local Elasticsearch に送る
 
-当日直前に新規実装するより、まずは Tailscale 経由の安定したファイル転送で `cowrie.json` と `conn.log` を local 側へ届けるのが安全である。
+当日直前に新規実装するより、まずは Tailscale 経由の安定したファイル転送で `conn.log` を local 側へ届けるのが安全である。
 
 ## 8. 発表前チェックリスト
 
 - EC2 で `make cowrie-ps` が `Up`
-- `cowrie.json` が更新されている
 - `data/logs/zeek/live/cowrie/current/conn.log` が更新されている
 - local PC で `make elk-ps` が `Up`
 - Kibana の `Cowrie Live Attack Monitoring` が開ける
-- `zeek-cowrie-live-*` と `cowrie-app-*` に document がある
+- `zeek-cowrie-live-*` に document がある
 
 ## 9. 当日トラブル時の優先順位
 
