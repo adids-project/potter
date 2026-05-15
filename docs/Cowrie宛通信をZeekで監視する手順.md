@@ -101,7 +101,7 @@ Kibana では次の Data View を使う。
 - Index pattern: `zeek-cowrie-live-*`
 - Timestamp field: `@timestamp`
 
-現在 repo に保存済みの realtime dashboard は、[cowrie_live_attack_monitoring.ndjson](/home/mnl/adids-core/repos/adids-elk/docs/kibana_saved_objects/cowrie_live_attack_monitoring.ndjson:1) を import して使う。
+現在 repo に保存済みの realtime dashboard は、[cowrie_live_attack_monitoring.ndjson](/home/mnl/adids/elk/docs/kibana_saved_objects/cowrie_live_attack_monitoring.ndjson:1) を import して使う。
 この dashboard は `zeek-cowrie-live-*` だけを対象にする。
 また、GeoIP/ASN enrich が有効なら `source.ip`, `source.geo.country_name`, `source.as.organization.name` を使った panel と map が有効になる。
 

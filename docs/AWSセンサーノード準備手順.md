@@ -29,8 +29,8 @@ repo 側で実装済みなのは次である。
 
 補足:
 
-- `adids-elk` 側の Filebeat は、ELK マシン上にある `conn.log` を読む local ingest である
-- AWS 側で 1 行ごとに送りたい場合は、`adids-honeypots` 側の remote shipper を使う
+- `elk` 側の Filebeat は、ELK マシン上にある `conn.log` を読む local ingest である
+- AWS 側で 1 行ごとに送りたい場合は、`potter` 側の remote shipper を使う
 
 ## 2. EC2 側の前提
 
@@ -132,7 +132,7 @@ make es-create-cowrie-live-shipper-user
 
 ### 7-2. CA 証明書を EC2 側へ渡す
 
-`adids-elk` 側で生成された CA 証明書を、EC2 側 repo の次へ配置する。
+`elk` 側で生成された CA 証明書を、EC2 側 repo の次へ配置する。
 
 ```text
 filebeat/certs/ca/ca.crt
@@ -155,7 +155,7 @@ make cowrie-ps
 
 これで、`data/logs/zeek/live/cowrie/current/conn.log` に新しい行が追加されるたび、EC2 側 Filebeat が `zeek-cowrie-live-*` へ送る。
 
-fallback として、Tailscale 経由のファイル転送で `conn.log` を local 側へ届け、`adids-elk` 側の local ingest を使う方法も残る。
+fallback として、Tailscale 経由のファイル転送で `conn.log` を local 側へ届け、`elk` 側の local ingest を使う方法も残る。
 
 ## 8. 発表前チェックリスト
 

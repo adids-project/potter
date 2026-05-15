@@ -27,7 +27,7 @@ make cowrie-up
 
 を作成する。
 
-その後、[docker-compose.yml](/home/mnl/adids-core/repos/adids-honeypots/docker-compose.yml:1) を使って、独立した `adids-honeypots` project として Cowrie container を起動する。
+その後、[docker-compose.yml](/home/mnl/adids/potter/docker-compose.yml:1) を使って、独立した `potter` project として Cowrie container を起動する。
 
 ## 2. 起動状態を確認する
 

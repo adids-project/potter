@@ -22,7 +22,7 @@ shipper-env-check:
 		exit 1; \
 	fi
 	@if [ ! -f "$(SHIPPER_CA_FILE)" ]; then \
-		echo "Missing $(SHIPPER_CA_FILE). Copy the adids-elk CA certificate first." >&2; \
+		echo "Missing $(SHIPPER_CA_FILE). Copy the elk CA certificate first." >&2; \
 		exit 1; \
 	fi
 
