@@ -29,7 +29,7 @@ make cowrie-up
 
 を作成する。
 
-その後、[docker-compose.cowrie.yml](/home/mnl/adids/docker-compose.cowrie.yml:1) を使って、独立した `adids-cowrie` project として Cowrie container を起動する。
+その後、[docker-compose.yml](/home/mnl/adids-core/repos/adids-honeypots/docker-compose.yml:1) を使って、独立した `adids-honeypots` project として Cowrie container を起動する。
 
 ## 2. 起動状態を確認する
 
@@ -109,12 +109,12 @@ make cowrie-down
 - `make cowrie-ps` で container が `Up` か確認する
 - 2222/tcp に実際に接続したか確認する
 - `cowrie/var/log/cowrie/` が container から書き込めるか確認する
-- 必要なら `docker compose -p adids-cowrie -f docker-compose.cowrie.yml logs cowrie` で container stdout/stderr を確認する
+- 必要なら `docker compose -p adids-honeypots -f docker-compose.yml logs cowrie` で container stdout/stderr を確認する
 
 ### port 2222 が使えない
 
 - 既存 process が 2222 を使っていないか確認する
-- 必要なら `docker-compose.cowrie.yml` 側の host port を変更する
+- 必要なら `docker-compose.yml` 側の host port を変更する
 
 ## 参考
 

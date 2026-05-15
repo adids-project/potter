@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     ports:
       - "2222:2222"
-    volumes:
+volumes:
       - "./cowrie/var/log/cowrie:/cowrie/cowrie-git/var/log/cowrie"
       - "./cowrie/var/lib/cowrie:/cowrie/cowrie-git/var/lib/cowrie"
 

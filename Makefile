@@ -1,5 +1,5 @@
 ROOT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
-COWRIE_DOCKER_COMPOSE := docker compose -p adids-honeypots -f "$(ROOT_DIR)/docker-compose.cowrie.yml"
+COWRIE_DOCKER_COMPOSE := docker compose -p adids-honeypots -f "$(ROOT_DIR)/docker-compose.yml"
 
 .PHONY: cowrie-up
 cowrie-up:

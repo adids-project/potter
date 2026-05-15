@@ -14,7 +14,7 @@
 
 repo 側で実装済みなのは次である。
 
-- EC2 上で使える `docker-compose.cowrie.yml`
+- EC2 上で使える `docker-compose.yml`
 - `make cowrie-live-up`
 - local PC 側の `make elk-up-cowrie-live`
 - `make kibana-import-cowrie-live-dashboard`
@@ -51,7 +51,7 @@ repo 側で実装済みなのは次である。
 secret 配置の原則:
 
 - Cowrie センサ専用 EC2 には、不要な ELK 用 `.env` を置かない
-- `docker-compose.cowrie.yml` だけで足りるなら、`ELASTIC_PASSWORD` や `ENCRYPTION_KEY` は local PC 側だけに置く
+- `docker-compose.yml` だけで足りるなら、`ELASTIC_PASSWORD` や `ENCRYPTION_KEY` は local PC 側だけに置く
 - local ELK 用 secret の扱いは [シークレット管理.md](./シークレット管理.md) を参照
 
 ## 3. Security Group
