@@ -19,7 +19,7 @@ repo 側で実装済みなのは次である。
 - 公開 VPS 上で使える `docker-compose.yml`
 - `make up`
 - 公開 VPS 側の [potter_pull_force_command.sh](/home/mnl/adids/potter/scripts/potter_pull_force_command.sh:1)
-- 手元 PC 側の `make setup`
+- 手元 PC 側の `make up`
 - 手元 PC 側の `make pull-once`
 
 運用で決める必要があるのは次である。
@@ -161,7 +161,7 @@ tail -n 5 data/logs/zeek/live/cowrie/current/conn.log
 手元 PC 側 repo root:
 
 ```bash
-make setup
+make up
 make ps
 ```
 
@@ -170,7 +170,7 @@ Kibana で開くもの:
 - `Cowrie Live Attack Monitoring`
 
 この構成では、手元 PC 側の Filebeat が `elk/data/logs/zeek/live/cowrie/current/conn.log` を監視し、`zeek-cowrie-live-*` に投入する。
-`ELK_STACK_MODE=live` のときは、`make setup` が managed cron の登録まで行う。
+`ELK_STACK_MODE=live` のときは、`make up` が managed cron の登録まで行う。
 
 ## 8. 手元PC puller の方針
 
