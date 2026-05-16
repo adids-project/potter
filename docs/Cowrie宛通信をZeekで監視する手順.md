@@ -12,14 +12,14 @@
 ## 前提
 
 - Docker / Docker Compose が使えること
-- `make cowrie-up` が動作済み、または Cowrie 単体基盤の意味を理解していること
+- `make up` が動作済み、または推奨センサ構成の意味を理解していること
 
 Cowrie 単体起動は [Cowrieを起動する手順.md](./Cowrieを起動する手順.md) を参照。
 
 ## 1. Cowrie + Zeek live capture を起動する
 
 ```bash
-make cowrie-live-up
+make up
 ```
 
 このコマンドは次を行う。
@@ -32,7 +32,7 @@ make cowrie-live-up
 ## 2. 起動状態を確認する
 
 ```bash
-make cowrie-ps
+make ps
 ```
 
 起動に成功すると、少なくとも次の 2 service が `Up` になる。
@@ -118,7 +118,7 @@ make kibana-import-cowrie-live-dashboard
 Cowrie / Zeek live sidecar の停止:
 
 ```bash
-make cowrie-down
+make down
 ```
 
 ELK 側の停止:
@@ -131,7 +131,7 @@ make elk-down
 
 ### `conn.log` が出ない
 
-- `make cowrie-ps` で `zeek-cowrie-live` が `Up` か確認する
+- `make ps` で `zeek-cowrie-live` が `Up` か確認する
 - `data/logs/zeek/live/cowrie/current/` が作られているか確認する
 - Cowrie に実際に接続したか確認する
 

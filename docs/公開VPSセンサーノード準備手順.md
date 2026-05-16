@@ -17,7 +17,7 @@
 repo 側で実装済みなのは次である。
 
 - 公開 VPS 上で使える `docker-compose.yml`
-- `make cowrie-live-up`
+- `make up`
 - 公開 VPS 側の [potter_pull_force_command.sh](/home/mnl/adids/potter/scripts/potter_pull_force_command.sh:1)
 - 手元 PC 側の `make elk-up-cowrie-live`
 - 手元 PC 側の `make kibana-import-cowrie-live-dashboard`
@@ -132,8 +132,8 @@ local ELK 用 secret の扱いは [シークレット管理.md](/home/mnl/adids/
 公開 VPS 側の repo root:
 
 ```bash
-make cowrie-live-up
-make cowrie-ps
+make up
+make ps
 ```
 
 期待する service:
@@ -141,7 +141,7 @@ make cowrie-ps
 - `cowrie`
 - `zeek-cowrie-live`
 
-ここでは `make cowrie-live-shipper-up` は使わない。
+この repo の入口は `make up`, `make down`, `make ps` の 3 つに絞っている。
 
 ## 6. 公開VPS 側の確認
 
@@ -296,7 +296,7 @@ make cowrie-live-pull-cron-example
 
 ## 11. 発表前チェックリスト
 
-- 公開 VPS で `make cowrie-ps` が `Up`
+- 公開 VPS で `make ps` が `Up`
 - `data/logs/zeek/live/cowrie/current/conn.log` が更新されている
 - 手元 PC で `make elk-ps` が `Up`
 - puller が `LOCAL_LOG_PATH` に追記できている
