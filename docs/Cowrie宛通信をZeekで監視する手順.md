@@ -56,8 +56,11 @@ data/logs/zeek/live/cowrie/current/conn.log
 
 ## 4. ELK 側を起動する
 
+手元 PC 側の `elk` repo root で実行する。
+
 ```bash
-make elk-up-cowrie-live
+cd /path/to/elk
+make up
 ```
 
 この target は、`filebeat/cowrie_live_enrich_pipeline.json` を Elasticsearch に登録したうえで、Zeek live `conn.log` 用 `filebeat-cowrie-live01` を起動する。
@@ -110,7 +113,8 @@ Kibana では次の Data View を使う。
 Kibana 起動後の canonical な import は次で行う。
 
 ```bash
-make kibana-import-cowrie-live-dashboard
+cd /path/to/elk
+make dashboard-import
 ```
 
 ## 7. 停止する
@@ -124,7 +128,8 @@ make down
 ELK 側の停止:
 
 ```bash
-make elk-down
+cd /path/to/elk
+make down
 ```
 
 ## 想定トラブル
@@ -137,7 +142,7 @@ make elk-down
 
 ### `zeek-cowrie-live-*` に document が出ない
 
-- `make elk-up-cowrie-live` で `filebeat-cowrie-live01` を起動したか確認する
+- 手元 PC 側の `elk` repo root で `make up` を実行したか確認する
 - `data/logs/zeek/live/cowrie/current/conn.log` が JSON Lines になっているか確認する
 - `@timestamp` 用の `ts` field が入っているか確認する
 

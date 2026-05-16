@@ -19,10 +19,8 @@ repo 側で実装済みなのは次である。
 - 公開 VPS 上で使える `docker-compose.yml`
 - `make up`
 - 公開 VPS 側の [potter_pull_force_command.sh](/home/mnl/adids/potter/scripts/potter_pull_force_command.sh:1)
-- 手元 PC 側の `make elk-up-cowrie-live`
-- 手元 PC 側の `make kibana-import-cowrie-live-dashboard`
-- 手元 PC 側の `make init-cowrie-live-pull-env`
-- 手元 PC 側の `make cowrie-live-pull-once`
+- 手元 PC 側の `make setup`
+- 手元 PC 側の `make pull-once`
 
 運用で決める必要があるのは次である。
 
@@ -163,9 +161,8 @@ tail -n 5 data/logs/zeek/live/cowrie/current/conn.log
 手元 PC 側 repo root:
 
 ```bash
-make elk-up-cowrie-live
-make kibana-import-cowrie-live-dashboard
-make elk-ps
+make setup
+make ps
 ```
 
 Kibana で開くもの:
@@ -173,6 +170,7 @@ Kibana で開くもの:
 - `Cowrie Live Attack Monitoring`
 
 この構成では、手元 PC 側の Filebeat が `elk/data/logs/zeek/live/cowrie/current/conn.log` を監視し、`zeek-cowrie-live-*` に投入する。
+`ELK_STACK_MODE=live` のときは、`make setup` が managed cron の登録まで行う。
 
 ## 8. 手元PC puller の方針
 
@@ -181,27 +179,22 @@ puller は手元 PC 側だけで動かす。
 
 ### 8-1. 設定項目
 
+設定の正本は、手元 PC 側 `elk/.env` とする。
 最低限、次の設定を持たせる。
 
 ```env
-MODE=normal
+ELK_STACK_MODE=live
 PULL_INTERVAL_MINUTES=5
 
-REMOTE_HOST=conoha-sensor
-REMOTE_PORT=22
-REMOTE_USER=potter_pull
-REMOTE_LOG_PATH=/home/ubuntu/potter/data/logs/zeek/live/cowrie/current/conn.log
-
-LOCAL_LOG_PATH=/home/.../adids/elk/data/logs/zeek/live/cowrie/current/conn.log
-STATE_PATH=/home/.../adids/elk/data/logs/zeek/live/cowrie/state/pull_state.json
-LOCK_PATH=/home/.../adids/elk/data/logs/zeek/live/cowrie/state/pull.lock
-
-SSH_KEY_PATH=/home/.../.ssh/potter_pull_ed25519
-KNOWN_HOSTS_PATH=/home/.../.ssh/known_hosts
-
-MAX_BYTES_PER_RUN=67108864
-SSH_CONNECT_TIMEOUT_SECONDS=15
-SSH_COMMAND_TIMEOUT_SECONDS=120
+PULL_REMOTE_HOST=conoha-sensor
+PULL_REMOTE_PORT=22
+PULL_REMOTE_USER=potter_pull
+PULL_REMOTE_LOG_PATH=/path/to/potter/data/logs/zeek/live/cowrie/current/conn.log
+PULL_SSH_KEY_PATH=/home/.../.ssh/potter_pull_ed25519
+PULL_KNOWN_HOSTS_PATH=/home/.../.ssh/known_hosts
+PULL_MAX_BYTES_PER_RUN=67108864
+PULL_SSH_CONNECT_TIMEOUT_SECONDS=15
+PULL_SSH_COMMAND_TIMEOUT_SECONDS=120
 ```
 
 ### 8-2. 推奨間隔
@@ -255,7 +248,7 @@ puller の state は少なくとも次を持つ。
 `authorized_keys` の例:
 
 ```text
-command="/home/ubuntu/potter/scripts/potter_pull_force_command.sh",restrict ssh-ed25519 <PUBLIC_KEY> home-pc-cowrie-pull
+command="/path/to/potter/scripts/potter_pull_force_command.sh",restrict ssh-ed25519 <PUBLIC_KEY> home-pc-cowrie-pull
 ```
 
 このスクリプトは、次の 2 操作だけを許可する。
@@ -270,16 +263,10 @@ command="/home/ubuntu/potter/scripts/potter_pull_force_command.sh",restrict ssh-
 手元 PC 側 `elk` repo root:
 
 ```bash
-make init-cowrie-live-pull-env
-make cowrie-live-pull-once
-make cowrie-live-pull-cron-example
+make pull-once
 ```
 
-`init-cowrie-live-pull-env` は、`cowrie_live_pull.env.example` から実行用の `cowrie_live_pull.env` を生成し、repo root と `$HOME` を埋める。
-
-`cowrie-live-pull-once` は、その場で 1 回だけ pull する。
-
-`cowrie-live-pull-cron-example` は、毎分実行用の crontab 1 行を表示する。
+`pull-once` は、その場で 1 回だけ pull する。
 
 ## 10. 手元PC が落ちたときの扱い
 
@@ -298,7 +285,7 @@ make cowrie-live-pull-cron-example
 
 - 公開 VPS で `make ps` が `Up`
 - `data/logs/zeek/live/cowrie/current/conn.log` が更新されている
-- 手元 PC で `make elk-ps` が `Up`
+- 手元 PC で `make ps` が `Up`
 - puller が `LOCAL_LOG_PATH` に追記できている
 - Kibana の `Cowrie Live Attack Monitoring` が開ける
 - `zeek-cowrie-live-*` に document がある
