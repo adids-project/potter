@@ -7,6 +7,8 @@
 この段階では、まず `conn.log` の flow-level 監視だけを対象にする。
 `ssh.log` や `notice.log` などは Zeek 側で生成されうるが、現在の ELK ingest は `conn.log` のみを扱う。
 
+公開 VPS 上のセンサを `手元PC pull` で運用する場合の全体方針は、[公開VPSセンサーノード準備手順](/home/mnl/adids/potter/docs/公開VPSセンサーノード準備手順.md:1) を参照。
+
 ## 前提
 
 - Docker / Docker Compose が使えること
