@@ -43,7 +43,7 @@ repo 側で実装済みなのは次である。
 +---------------------------------------------------+
 | Public VPS / Sensor                               |
 |                                                   |
-|  Cowrie (2222/tcp)                                |
+|  Cowrie 公開待受 (既定 22/tcp)                    |
 |      |                                            |
 |      v                                            |
 |  Zeek live capture                                |
@@ -106,10 +106,10 @@ repo 側で実装済みなのは次である。
 
 必要 port:
 
-- `2222/tcp`
-  - Cowrie SSH
 - `22/tcp`
-  - 管理 SSH
+  - Cowrie 公開待受
+- `443/tcp`
+  - 管理用 SSH / pull SSH
 
 開けないもの:
 
@@ -125,11 +125,36 @@ secret 配置の原則:
 
 local ELK 用 secret の扱いは [シークレット管理.md](/home/mnl/adids/elk/docs/シークレット管理.md:1) を参照。
 
+### 4-1. Cowrie を `22/tcp` に出し、管理 SSH は `443/tcp` に寄せる
+
+大学や企業ネットワークでは outbound `22/tcp` が silent drop されることがある。
+この場合、手元 PC 側の puller は `PULL_REMOTE_PORT=22` では止まる。
+
+そのため、現在の既定構成では `Cowrie = 22/tcp`, `管理用 SSH = 443/tcp` とする。
+通常は `make up` が [ensure_sshd_pull_port.sh](/home/mnl/adids/potter/scripts/ensure_sshd_pull_port.sh:1) を先に実行し、この設定を自動で入れる。
+
+```bash
+sudo tee /etc/ssh/sshd_config.d/99-potter-pull-port.conf >/dev/null <<'EOF'
+Port 443
+EOF
+
+sudo sshd -t
+sudo systemctl reload ssh
+sudo ss -ltnp | egrep ':(22|443)\s'
+```
+
+必要なら ConoHa 側 firewall と VPS 内 firewall でも `22/tcp` と `443/tcp` を許可する。
+
+手元 PC 側では、`make up` が既存 `elk/.env` の `PULL_REMOTE_PORT=22` を `443` に自動移行する。
+加えて `COWRIE_PUBLIC_PORT=22` を入れる。
+既に `8443` など別の明示値を設定している場合は、その値を優先して上書きしない。
+
 ## 5. 公開VPS 側で repo を起動する
 
 公開 VPS 側の repo root:
 
 ```bash
+make sensor-host-init
 make up
 make ps
 ```
@@ -140,6 +165,8 @@ make ps
 - `zeek-cowrie-live`
 
 この repo の入口は `make up`, `make down`, `make ps` の 3 つに絞っている。
+初回だけ `make sensor-host-init` が必要で、これが `.potter-sensor-host` marker を作る。
+`make up` は `Cowrie` / `Zeek` の起動前に `sshd` の管理用 port を整える。
 
 ## 6. 公開VPS 側の確認
 
@@ -171,6 +198,7 @@ Kibana で開くもの:
 
 この構成では、手元 PC 側の Filebeat が `elk/data/logs/zeek/live/cowrie/current/conn.log` を監視し、`zeek-cowrie-live-*` に投入する。
 `ELK_STACK_MODE=live` のときは、`make up` が managed cron の登録まで行う。
+加えて、既存 `.env` の `PULL_REMOTE_PORT=22` を `443` に自動移行する。
 
 ## 8. 手元PC puller の方針
 
@@ -187,7 +215,8 @@ ELK_STACK_MODE=live
 PULL_INTERVAL_MINUTES=5
 
 PULL_REMOTE_HOST=conoha-sensor
-PULL_REMOTE_PORT=22
+PULL_REMOTE_PORT=443
+COWRIE_PUBLIC_PORT=22
 PULL_REMOTE_USER=potter_pull
 PULL_REMOTE_LOG_PATH=/path/to/potter/data/logs/zeek/live/cowrie/current/conn.log
 PULL_SSH_KEY_PATH=/home/.../.ssh/potter_pull_ed25519

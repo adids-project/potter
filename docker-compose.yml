@@ -3,7 +3,7 @@ services:
     image: cowrie/cowrie
     restart: unless-stopped
     ports:
-      - "2222:2222"
+      - "${COWRIE_PUBLIC_PORT:-22}:2222"
     volumes:
       - "./cowrie/var/log/cowrie:/cowrie/cowrie-git/var/log/cowrie"
       - "./cowrie/var/lib/cowrie:/cowrie/cowrie-git/var/lib/cowrie"
@@ -41,5 +41,6 @@ services:
       - ELASTIC_USER=${ELASTIC_USER}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
       - SENSOR_ID=${SENSOR_ID:-zeek-cowrie-live-01}
+      - COWRIE_PUBLIC_PORT=${COWRIE_PUBLIC_PORT:-22}
     command:
       - --strict.perms=false

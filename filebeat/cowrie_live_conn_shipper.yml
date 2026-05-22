@@ -27,6 +27,7 @@ processors:
       fields:
         source_type: cowrie_live
         sensor_id: ${SENSOR_ID}
+        cowrie_public_port: ${COWRIE_PUBLIC_PORT}
   - add_fields:
       target: event
       fields:
