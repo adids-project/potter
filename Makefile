@@ -9,6 +9,22 @@ export COWRIE_PUBLIC_PORT
 export POTTER_PULL_SSHD_PORT
 export POTTER_MANAGE_SSHD
 
+.PHONY: help
+help:
+	@printf '%s\n' \
+	'使い方:' \
+	'  make <ターゲット>' \
+	'' \
+	'主要コマンド:' \
+	'  sensor-host-init            このホストを公開センサホストとして初回承認' \
+	'  up                          Cowrie と Zeek live capture を起動' \
+	'  ps                          Potter コンテナの状態を表示' \
+	'  down                        Potter コンテナを停止' \
+	'' \
+	'補助コマンド:' \
+	'  check-sensor-host           公開センサホスト marker を確認' \
+	'  ensure-sshd-pull-port       管理用 SSH / pull SSH の待受ポートを設定'
+
 .PHONY: sensor-host-init
 sensor-host-init:
 	@/bin/sh $(SENSOR_HOST_GUARD_SCRIPT) init
